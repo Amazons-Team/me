@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجز موعد - مركز فاطمة لطب الأسنان</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .booking {
+            padding: 100px 0 50px;
+            background: #f8f9fa;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .booking-form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+        }
+        
+        .available-times {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .time-slot {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .time-slot:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .time-slot.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .time-slot.booked {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 15px;
+        }
+        
+        .calendar-day {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .calendar-day.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .calendar-day.today {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .calendar-day.weekend {
+            background: #f39c12;
+            color: white;
+            border-color: #f39c12;
+        }
+        
+        .calendar-day.past {
+            background: #95a5a6;
+            color: white;
+            border-color: #95a5a6;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .calendar-header div {
+            text-align: center;
+            font-weight: 500;
+            padding: 10px;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .booking {
+                padding: 80px 20px 30px;
+            }
+            
+            .available-times {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            
+            .calendar {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            
+            .calendar-header {
+                grid-template-columns: repeat(7, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/3498db/ffffff?text=F" alt="شعار المركز" onerror="this.src='https://via.placeholder.com/50x50/cccccc/ffffff?text=Logo'">
+                <h1>مركز فاطمة لطب الأسنان</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/pages/doctors.html">الأطباء</a></li>
+                    <li><a href="/pages/booking.html" class="active">حجز موعد</a></li>
+                    <li><a href="/pages/inquiries.html">الاستعلامات</a></li>
+                    <li><a href="/pages/inquiry-staff.html">موظف الاستعلامات</a></li>
+                    <li><a href="/pages/doctor-dashboard.html">واجهة الأطباء</a></li>
+                    <li><a href="/pages/admin-panel.html">لوحة التحكم</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Booking Section -->
+    <section class="booking">
+        <div class="container">
+            <h2>حجز موعد جديد</h2>
+            <div class="booking-form-container">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="patientName">اسم المريض</label>
+                        <input type="text" id="patientName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patientPhone">رقم الهاتف</label>
+                        <input type="tel" id="patientPhone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patientEmail">البريد الإلكتروني</label>
+                        <input type="email" id="patientEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clinic">اختر العيادة</label>
+                        <select id="clinic" required onchange="loadDoctors()">
+                            <option value="">اختر العيادة</option>
+                            <option value="1">عيادة طب الأسنان العامة - د. أحمد محمد</option>
+                            <option value="2">عيادة جراحة الأسنان - د. فاطمة علي</option>
+                            <option value="3">عيادة تقويم الأسنان - د. محمد حسن</option>
+                            <option value="4">عيادة طب الأسنان للأطفال - د. سارة أحمد</option>
+                            <option value="5">عيادة زراعة الأسنان - د. خالد محمود</option>
+                            <option value="6">عيادة تجميل الأسنان - د. نادية عمر</option>
+                            <option value="7">عيادة علاج اللثة - د. وليد عبد الله</option>
+                            <option value="8">عيادة الأسنان الرقمية - د. ريم عبد الرحمن</option>
+                            <option value="9">عيادة طب الأسنان الوقائي - د. طارق محمد</option>
+                            <option value="10">عيادة طب الأسنان الطارئ - د. منى أحمد</option>
+                            <option value="11">عيادة تبييض الأسنان - د. يوسف علي</option>
+                            <option value="12">عيادة جراحة الفم - د. هند محمد</option>
+                            <option value="13">عيادة طب الأسنان التجميلي - د. ماهر أحمد</option>
+                            <option value="14">عيادة طب الأسنان المتطور - د. نور عبد الله</option>
+                            <option value="15">عيادة طب الأسنان الشامل - د. سلمى محمد</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor">اختر الطبيب</label>
+                        <select id="doctor" required>
+                            <option value="">اختر الطبيب</option>
+                            <!-- سيتم تحميل الأطباء ديناميكياً -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="serviceType">نوع الخدمة</label>
+                        <select id="serviceType" required>
+                            <option value="">اختر نوع الخدمة</option>
+                            <option value="checkup">كشف جديد</option>
+                            <option value="treatment">استكمال علاج</option>
+                            <option value="session">جلسة علاجية</option>
+                            <option value="followup">متابعة</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appointmentDate">تاريخ الموعد</label>
+                        <input type="date" id="appointmentDate" required>
+                        <div class="calendar-header">
+                            <div>أحد</div>
+                            <div>اثنين</div>
+                            <div>ثلاثاء</div>
+                            <div>أربعاء</div>
+                            <div>خميس</div>
+                            <div>جمعة</div>
+                            <div>سبت</div>
+                        </div>
+                        <div class="calendar" id="calendar">
+                            <!-- سيتم تحميل التقويم ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appointmentTime">وقت الموعد</label>
+                        <div class="available-times" id="availableTimes">
+                            <!-- سيتم تحميل الأوقات المتاحة ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">ملاحظات إضافية</label>
+                        <textarea id="notes" rows="4"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">تأكيد الحجز</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // بيانات الأوقات المتاحة
+        const availableTimes = [
+            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+            "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
+        ];
+        
+        // بيانات الأوقات المحجوزة
+        const bookedTimes = ["10:00", "11:00", "14:30", "16:00"];
+        
+        // تحميل التقويم
+        function loadCalendar() {
+            const calendar = document.getElementById('calendar');
+            if (!calendar) return;
+            
+            calendar.innerHTML = '';
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            
+            // الحصول على أول يوم في الشهر
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            // ملء الأيام الفارغة في بداية الشهر
+            const startDay = firstDay.getDay();
+            for (let i = 0; i < startDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day past';
+                calendar.appendChild(emptyDay);
+            }
+            
+            // ملء أيام الشهر
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                dayElement.dataset.date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // تحديد اليوم الحالي
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // تحديد نهاية الأسبوع
+                const dayOfWeek = new Date(year, month, day).getDay();
+                if (dayOfWeek === 5 || dayOfWeek === 6) { // الجمعة والسبت
+                    dayElement.classList.add('weekend');
+                }
+                
+                // تحديد الأيام الماضية
+                if (day < today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayElement.classList.add('past');
+                }
+                
+                // إضافة مستمع الحدث
+                dayElement.addEventListener('click', function() {
+                    if (!this.classList.contains('past')) {
+                        // إزالة التحديد من الأيام الأخرى
+                        document.querySelectorAll('.calendar-day').forEach(d => {
+                            d.classList.remove('selected');
+                        });
+                        
+                        // تحديد اليوم الحالي
+                        this.classList.add('selected');
+                        
+                        // تحميل الأوقات المتاحة لهذا اليوم
+                        loadAvailableTimes();
+                    }
+                });
+                
+                calendar.appendChild(dayElement);
+            }
+        }
+        
+        // تحميل الأوقات المتاحة
+        function loadAvailableTimes() {
+            const timesContainer = document.getElementById('availableTimes');
+            if (!timesContainer) return;
+            
+            timesContainer.innerHTML = '';
+            
+            availableTimes.forEach(time => {
+                const timeSlot = document.createElement('div');
+                timeSlot.className = 'time-slot';
+                timeSlot.textContent = time;
+                timeSlot.dataset.time = time;
+                
+                // تحديد الأوقات المحجوزة
+                if (bookedTimes.includes(time)) {
+                    timeSlot.classList.add('booked');
+                }
+                
+                // إضافة مستمع الحدث
+                timeSlot.addEventListener('click', function() {
+                    if (!this.classList.contains('booked')) {
+                        // إزالة التحديد من الأوقات الأخرى
+                        document.querySelectorAll('.time-slot').forEach(t => {
+                            t.classList.remove('selected');
+                        });
+                        
+                        // تحديد الوقت الحالي
+                        this.classList.add('selected');
+                    }
+                });
+                
+                timesContainer.appendChild(timeSlot);
+            });
+        }
+        
+        // تحميل الأطباء حسب العيادة المختارة
+        function loadDoctors() {
+            const clinicSelect = document.getElementById('clinic');
+            const doctorSelect = document.getElementById('doctor');
+            
+            if (!clinicSelect || !doctorSelect) return;
+            
+            const clinicId = clinicSelect.value;
+            doctorSelect.innerHTML = '<option value="">اختر الطبيب</option>';
+            
+            if (clinicId) {
+                // هنا يمكن تحميل الأطباء حسب العيادة المختارة
+                const doctors = [
+                    { id: 1, name: "د. أحمد محمد" },
+                    { id: 2, name: "د. فاطمة علي" },
+                    { id: 3, name: "د. محمد حسن" },
+                    { id: 4, name: "د. سارة أحمد" },
+                    { id: 5, name: "د. خالد محمود" },
+                    { id: 6, name: "د. نادية عمر" },
+                    { id: 7, name: "د. وليد عبد الله" },
+                    { id: 8, name: "د. ريم عبد الرحمن" },
+                    { id: 9, name: "د. طارق محمد" },
+                    { id: 10, name: "د. منى أحمد" },
+                    { id: 11, name: "د. يوسف علي" },
+                    { id: 12, name: "د. هند محمد" },
+                    { id: 13, name: "د. ماهر أحمد" },
+                    { id: 14, name: "د. نور عبد الله" },
+                    { id: 15, name: "د. سلمى محمد" }
+                ];
+                
+                doctors.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = doctor.name;
+                    doctorSelect.appendChild(option);
+                });
+            }
+        }
+        
+        // تعيين الحد الأدنى للتاريخ (اليوم الحالي)
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('appointmentDate');
+            if (dateInput) {
+                dateInput.min = today;
+            }
+        }
+        
+        // معالجة نموذج الحجز
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                patientName: document.getElementById('patientName').value,
+                patientPhone: document.getElementById('patientPhone').value,
+                patientEmail: document.getElementById('patientEmail').value,
+                clinic: document.getElementById('clinic').value,
+                doctor: document.getElementById('doctor').value,
+                serviceType: document.getElementById('serviceType').value,
+                appointmentDate: document.getElementById('appointmentDate').value,
+                appointmentTime: getSelectedTime(),
+                notes: document.getElementById('notes').value
+            };
+            
+            // التحقق من اختيار الوقت
+            if (!formData.appointmentTime) {
+                alert('يرجى اختيار وقت الموعد!');
+                return;
+            }
+            
+            alert('تم حجز الموعد بنجاح! سيتم التواصل معك لتأكيد الحجز.');
+            this.reset();
+        });
+        
+        // الحصول على الوقت المحدد
+        function getSelectedTime() {
+            const selectedTime = document.querySelector('.time-slot.selected');
+            return selectedTime ? selectedTime.dataset.time : null;
+        }
+        
+        // تحميل الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            setMinDate();
+            loadCalendar();
+            loadAvailableTimes();
+            loadDoctors();
+        });
+    </script>
+</body>
+</html>

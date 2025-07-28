@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأطباء - مركز فاطمة لطب الأسنان</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .doctors {
+            padding: 100px 0 50px;
+            background: #f8f9fa;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .doctors-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .doctor-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .doctor-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .doctor-image {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .doctor-info {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .doctor-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-family: var(--heading-font-family);
+        }
+        
+        .specialty {
+            color: #3498db;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .doctor-contact {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .doctor-contact .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .filters-sidebar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filters-sidebar h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filter-group {
+            margin-bottom: 25px;
+        }
+        
+        .filter-group h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .filter-group ul {
+            list-style: none;
+        }
+        
+        .filter-group li {
+            margin-bottom: 10px;
+        }
+        
+        .filter-group a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .filter-group a:hover,
+        .filter-group a.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .filter-group a i {
+            font-size: 0.8rem;
+        }
+        
+        .search-filter {
+            margin-bottom: 25px;
+        }
+        
+        .search-filter input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .doctors {
+                padding: 80px 20px 30px;
+            }
+            
+            .doctors-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 30px;
+            }
+            
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/3498db/ffffff?text=F" alt="شعار المركز" onerror="this.src='https://via.placeholder.com/50x50/cccccc/ffffff?text=Logo'">
+                <h1>مركز فاطمة لطب الأسنان</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/pages/doctors.html" class="active">الأطباء</a></li>
+                    <li><a href="/pages/booking.html">حجز موعد</a></li>
+                    <li><a href="/pages/inquiries.html">الاستعلامات</a></li>
+                    <li><a href="/pages/inquiry-staff.html">موظف الاستعلامات</a></li>
+                    <li><a href="/pages/doctor-dashboard.html">واجهة الأطباء</a></li>
+                    <li><a href="/pages/admin-panel.html">لوحة التحكم</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Doctors Section -->
+    <section class="doctors">
+        <div class="container">
+            <h2>أطبائنا المتخصصون</h2>
+            
+            <div class="doctors-content">
+                <div class="doctors-main">
+                    <div class="search-filter">
+                        <input type="text" id="doctorSearch" placeholder="البحث في الأطباء..." onkeyup="searchDoctors()">
+                    </div>
+                    
+                    <div class="doctors-grid" id="doctors-container">
+                        <!-- سيتم تحميل الأطباء ديناميكياً -->
+                    </div>
+                </div>
+                
+                <div class="filters-sidebar">
+                    <h3><i class="fas fa-filter"></i> الفلاتر</h3>
+                    
+                    <div class="search-filter">
+                        <input type="text" id="sidebarSearch" placeholder="البحث..." onkeyup="searchDoctors()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h4><i class="fas fa-stethoscope"></i> التخصصات</h4>
+                        <ul>
+                            <li><a href="#" onclick="filterDoctors('all'); return false;" class="active"><i class="fas fa-chevron-left"></i> جميع التخصصات</a></li>
+                            <li><a href="#" onclick="filterDoctors('general'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان العامة</a></li>
+                            <li><a href="#" onclick="filterDoctors('surgery'); return false;"><i class="fas fa-chevron-left"></i> جراحة الأسنان</a></li>
+                            <li><a href="#" onclick="filterDoctors('orthodontics'); return false;"><i class="fas fa-chevron-left"></i> تقويم الأسنان</a></li>
+                            <li><a href="#" onclick="filterDoctors('pediatric'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان للأطفال</a></li>
+                            <li><a href="#" onclick="filterDoctors('implant'); return false;"><i class="fas fa-chevron-left"></i> زراعة الأسنان</a></li>
+                            <li><a href="#" onclick="filterDoctors('cosmetic'); return false;"><i class="fas fa-chevron-left"></i> تجميل الأسنان</a></li>
+                            <li><a href="#" onclick="filterDoctors('periodontics'); return false;"><i class="fas fa-chevron-left"></i> علاج اللثة</a></li>
+                            <li><a href="#" onclick="filterDoctors('digital'); return false;"><i class="fas fa-chevron-left"></i> الأسنان الرقمية</a></li>
+                            <li><a href="#" onclick="filterDoctors('preventive'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان الوقائي</a></li>
+                            <li><a href="#" onclick="filterDoctors('emergency'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان الطارئ</a></li>
+                            <li><a href="#" onclick="filterDoctors('whitening'); return false;"><i class="fas fa-chevron-left"></i> تبييض الأسنان</a></li>
+                            <li><a href="#" onclick="filterDoctors('oral-surgery'); return false;"><i class="fas fa-chevron-left"></i> جراحة الفم</a></li>
+                            <li><a href="#" onclick="filterDoctors('esthetic'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان التجميلي</a></li>
+                            <li><a href="#" onclick="filterDoctors('advanced'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان المتطور</a></li>
+                            <li><a href="#" onclick="filterDoctors('comprehensive'); return false;"><i class="fas fa-chevron-left"></i> طب الأسنان الشامل</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h4><i class="fas fa-star"></i> التقييم</h4>
+                        <ul>
+                            <li><a href="#" onclick="filterByRating(5); return false;"><i class="fas fa-chevron-left"></i> 5 نجوم</a></li>
+                            <li><a href="#" onclick="filterByRating(4); return false;"><i class="fas fa-chevron-left"></i> 4 نجوم فأعلى</a></li>
+                            <li><a href="#" onclick="filterByRating(3); return false;"><i class="fas fa-chevron-left"></i> 3 نجوم فأعلى</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h4><i class="fas fa-language"></i> اللغة</h4>
+                        <ul>
+                            <li><a href="#" onclick="filterByLanguage('ar'); return false;"><i class="fas fa-chevron-left"></i> العربية</a></li>
+                            <li><a href="#" onclick="filterByLanguage('en'); return false;"><i class="fas fa-chevron-left"></i> الإنجليزية</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // بيانات الأطباء
+        const doctors = [
+            {
+                id: 1,
+                name: "د. أحمد محمد",
+                specialty: "طب الأسنان العامة",
+                image: "https://via.placeholder.com/300x250/3498db/ffffff?text=د.أحمد+محمد",
+                phone: "0123456789",
+                email: "ahmed@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان العام مع أكثر من 10 سنوات خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 10
+            },
+            {
+                id: 2,
+                name: "د. فاطمة علي",
+                specialty: "جراحة الأسنان",
+                image: "https://via.placeholder.com/300x250/e74c3c/ffffff?text=د.فاطمة+علي",
+                phone: "0123456790",
+                email: "fatima@fatimadental.com",
+                bio: "طبيب أسنان مختص في جراحة الأسنان مع أكثر من 8 سنوات خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 8
+            },
+            {
+                id: 3,
+                name: "د. محمد حسن",
+                specialty: "تقويم الأسنان",
+                image: "https://via.placeholder.com/300x250/27ae60/ffffff?text=د.محمد+حسن",
+                phone: "0123456791",
+                email: "mohamed@fatimadental.com",
+                bio: "طبيب أسنان مختص في تقويم الأسنان مع أكثر من 12 سنة خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 12
+            },
+            {
+                id: 4,
+                name: "د. سارة أحمد",
+                specialty: "طب الأسنان للأطفال",
+                image: "https://via.placeholder.com/300x250/f39c12/ffffff?text=د.سارة+أحمد",
+                phone: "0123456792",
+                email: "sara@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان للأطفال مع أكثر من 6 سنوات خبرة",
+                rating: 4,
+                languages: ["ar", "en"],
+                experience: 6
+            },
+            {
+                id: 5,
+                name: "د. خالد محمود",
+                specialty: "زراعة الأسنان",
+                image: "https://via.placeholder.com/300x250/9b59b6/ffffff?text=د.خالد+محمود",
+                phone: "0123456793",
+                email: "khalid@fatimadental.com",
+                bio: "طبيب أسنان مختص في زراعة الأسنان مع أكثر من 9 سنوات خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 9
+            },
+            {
+                id: 6,
+                name: "د. نادية عمر",
+                specialty: "تجميل الأسنان",
+                image: "https://via.placeholder.com/300x250/1abc9c/ffffff?text=د.نادية+عمر",
+                phone: "0123456794",
+                email: "nadia@fatimadental.com",
+                bio: "طبيب أسنان مختص في تجميل الأسنان مع أكثر من 7 سنوات خبرة",
+                rating: 4,
+                languages: ["ar", "en"],
+                experience: 7
+            },
+            {
+                id: 7,
+                name: "د. وليد عبد الله",
+                specialty: "علاج اللثة",
+                image: "https://via.placeholder.com/300x250/34495e/ffffff?text=د.وليد+عبد+الله",
+                phone: "0123456795",
+                email: "waleed@fatimadental.com",
+                bio: "طبيب أسنان مختص في علاج اللثة مع أكثر من 11 سنة خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 11
+            },
+            {
+                id: 8,
+                name: "د. ريم عبد الرحمن",
+                specialty: "الأسنان الرقمية",
+                image: "https://via.placeholder.com/300x250/d35400/ffffff?text=د.ريم+عبد+الرحمن",
+                phone: "0123456796",
+                email: "reem@fatimadental.com",
+                bio: "طبيب أسنان مختص في الأسنان الرقمية مع أكثر من 5 سنوات خبرة",
+                rating: 4,
+                languages: ["ar", "en"],
+                experience: 5
+            },
+            {
+                id: 9,
+                name: "د. طارق محمد",
+                specialty: "طب الأسنان الوقائي",
+                image: "https://via.placeholder.com/300x250/c0392b/ffffff?text=د.طارق+محمد",
+                phone: "0123456797",
+                email: "tarek@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان الوقائي مع أكثر من 8 سنوات خبرة",
+                rating: 4,
+                languages: ["ar", "en"],
+                experience: 8
+            },
+            {
+                id: 10,
+                name: "د. منى أحمد",
+                specialty: "طب الأسنان الطارئ",
+                image: "https://via.placeholder.com/300x250/2980b9/ffffff?text=د.منى+أحمد",
+                phone: "0123456798",
+                email: "manal@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان الطارئ مع أكثر من 6 سنوات خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 6
+            },
+            {
+                id: 11,
+                name: "د. يوسف علي",
+                specialty: "تبييض الأسنان",
+                image: "https://via.placeholder.com/300x250/8e44ad/ffffff?text=د.يوسف+علي",
+                phone: "0123456799",
+                email: "yousef@fatimadental.com",
+                bio: "طبيب أسنان مختص في تبييض الأسنان مع أكثر من 7 سنوات خبرة",
+                rating: 4,
+                languages: ["ar", "en"],
+                experience: 7
+            },
+            {
+                id: 12,
+                name: "د. هند محمد",
+                specialty: "جراحة الفم",
+                image: "https://via.placeholder.com/300x250/2c3e50/ffffff?text=د.هند+محمد",
+                phone: "0123456800",
+                email: "hind@fatimadental.com",
+                bio: "طبيب أسنان مختص في جراحة الفم مع أكثر من 10 سنوات خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 10
+            },
+            {
+                id: 13,
+                name: "د. ماهر أحمد",
+                specialty: "طب الأسنان التجميلي",
+                image: "https://via.placeholder.com/300x250/16a085/ffffff?text=د.ماهر+أحمد",
+                phone: "0123456801",
+                email: "maher@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان التجميلي مع أكثر من 9 سنوات خبرة",
+                rating: 4,
+                languages: ["ar", "en"],
+                experience: 9
+            },
+            {
+                id: 14,
+                name: "د. نور عبد الله",
+                specialty: "طب الأسنان المتطور",
+                image: "https://via.placeholder.com/300x250/f39c12/ffffff?text=د.نور+عبد+الله",
+                phone: "0123456802",
+                email: "noor@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان المتطور مع أكثر من 8 سنوات خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 8
+            },
+            {
+                id: 15,
+                name: "د. سلمى محمد",
+                specialty: "طب الأسنان الشامل",
+                image: "https://via.placeholder.com/300x250/e67e22/ffffff?text=د.سلمى+محمد",
+                phone: "0123456803",
+                email: "salma@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان الشامل مع أكثر من 12 سنة خبرة",
+                rating: 5,
+                languages: ["ar", "en"],
+                experience: 12
+            }
+        ];
+        
+        // تحميل الأطباء
+        function loadDoctors() {
+            const container = document.getElementById('doctors-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            doctors.forEach(doctor => {
+                const doctorCard = `
+                    <div class="doctor-card" data-specialty="${doctor.specialty}" data-rating="${doctor.rating}" data-languages="${doctor.languages.join(',')}">
+                        <div class="doctor-image" style="background-image: url('${doctor.image}');"></div>
+                        <div class="doctor-info">
+                            <h3>${doctor.name}</h3>
+                            <p class="specialty">${doctor.specialty}</p>
+                            <div class="rating">
+                                ${generateStars(doctor.rating)}
+                                <span>(${doctor.rating}/5)</span>
+                            </div>
+                            <p class="bio">${doctor.bio}</p>
+                            <div class="doctor-contact">
+                                <a href="tel:${doctor.phone}" class="btn btn-primary">
+                                    <i class="fas fa-phone"></i> اتصال مباشر
+                                </a>
+                                <a href="mailto:${doctor.email}" class="btn btn-secondary">
+                                    <i class="fas fa-envelope"></i> إرسال رسالة
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += doctorCard;
+            });
+        }
+        
+        // توليد نجوم التقييم
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fas fa-star" style="color: #f39c12;"></i>';
+                } else {
+                    stars += '<i class="far fa-star" style="color: #ddd;"></i>';
+                }
+            }
+            return stars;
+        }
+        
+        // البحث في الأطباء
+        function searchDoctors() {
+            const searchTerm = document.getElementById('doctorSearch').value.toLowerCase();
+            const sidebarSearch = document.getElementById('sidebarSearch').value.toLowerCase();
+            const combinedSearch = searchTerm || sidebarSearch;
+            
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            doctorCards.forEach(card => {
+                const doctorName = card.querySelector('h3').textContent.toLowerCase();
+                const doctorSpecialty = card.querySelector('.specialty').textContent.toLowerCase();
+                const doctorBio = card.querySelector('.bio').textContent.toLowerCase();
+                
+                if (doctorName.includes(combinedSearch) || 
+                    doctorSpecialty.includes(combinedSearch) || 
+                    doctorBio.includes(combinedSearch)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // تصفية الأطباء حسب التخصص
+        function filterDoctors(specialty) {
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            doctorCards.forEach(card => {
+                if (specialty === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const cardSpecialty = card.dataset.specialty;
+                    if (cardSpecialty.includes(specialty)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+            
+            // تحديث الروابط النشطة
+            document.querySelectorAll('.filter-group a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // تصفية الأطباء حسب التقييم
+        function filterByRating(minRating) {
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            doctorCards.forEach(card => {
+                const cardRating = parseInt(card.dataset.rating);
+                if (cardRating >= minRating) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // تصفية الأطباء حسب اللغة
+        function filterByLanguage(language) {
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            doctorCards.forEach(card => {
+                const cardLanguages = card.dataset.languages.split(',');
+                if (cardLanguages.includes(language)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // تحميل الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctors();
+        });
+    </script>
+</body>
+</html>

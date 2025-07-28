@@ -1,0 +1,19 @@
+fatima-dental-center/
+├── index.html
+├── css/
+│   ├── style.css
+│   └── responsive.css
+├── js/
+│   └── main.js
+├── pages/
+│   ├── booking.html
+│   ├── doctors.html
+│   ├── inquiries.html
+│   ├── doctor-dashboard.html
+│   └── admin-panel.html
+├── images/
+│   ├── logo.png
+│   ├── clinic1.jpg
+│   ├── clinic2.jpg
+│   └── ... (الصور الأخرى)
+└── README.md

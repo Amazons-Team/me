@@ -1,0 +1,3135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة الأطباء - مركز فاطمة لطب الأسنان</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .doctor-dashboard {
+            padding: 100px 0 50px;
+            background: #f8f9fa;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .dashboard-content {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .dashboard-sidebar {
+            flex: 0 0 250px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .doctor-profile {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 15px;
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .dashboard-nav ul {
+            list-style: none;
+        }
+        
+        .dashboard-nav li {
+            margin-bottom: 5px;
+        }
+        
+        .dashboard-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-nav a:hover,
+        .dashboard-nav a.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .dashboard-main {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .dashboard-section {
+            display: none;
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .bg-primary {
+            background: #3498db;
+        }
+        
+        .bg-success {
+            background: #27ae60;
+        }
+        
+        .bg-warning {
+            background: #f39c12;
+        }
+        
+        .bg-info {
+            background: #34495e;
+        }
+        
+        .stat-info h4 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .recent-activity {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .activity-list {
+            margin-top: 15px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .activity-content p {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .activity-content span {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        .admin-actions {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .clinics-list table,
+        .doctors-list table,
+        .appointments-list table,
+        .users-list table,
+        .services-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .clinics-list th,
+        .clinics-list td,
+        .doctors-list th,
+        .doctors-list td,
+        .appointments-list th,
+        .appointments-list td,
+        .users-list th,
+        .users-list td,
+        .services-list th,
+        .services-list td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .clinics-list th,
+        .doctors-list th,
+        .appointments-list th,
+        .users-list th,
+        .services-list th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-confirmed {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status-cancelled {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-box {
+            min-width: 150px;
+        }
+        
+        .search-box input,
+        .filter-box select,
+        .filter-box input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 5px;
+        }
+        
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .pagination button:hover:not(.active) {
+            background: #f8f9fa;
+        }
+        
+        /* Appearance Settings Styles */
+        .appearance-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .setting-group {
+            margin-bottom: 25px;
+        }
+        
+        .setting-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .setting-group input[type="color"],
+        .setting-group input[type="text"],
+        .setting-group input[type="number"],
+        .setting-group select,
+        .setting-group input[type="file"],
+        .setting-group input[type="email"],
+        .setting-group input[type="tel"],
+        .setting-group input[type="password"],
+        .setting-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .setting-group input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+        
+        .preview-text {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .layout-preview {
+            border: 2px dashed #3498db;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            margin: 20px 0;
+        }
+        
+        .preview-header {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .preview-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .preview-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .preview-footer {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .settings-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .setting-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .setting-row label {
+            flex: 1;
+            font-weight: normal;
+        }
+        
+        .setting-row input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid #3498db;
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        .upload-area i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        /* أنماط إضافية للخطوط */
+        .font-preview {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+        
+        .font-sample {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .doctor-dashboard {
+                padding: 80px 20px 30px;
+            }
+            
+            .dashboard-content {
+                flex-direction: column;
+            }
+            
+            .dashboard-sidebar {
+                flex: none;
+                position: static;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .appearance-settings {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/3498db/ffffff?text=F" alt="شعار المركز" onerror="this.src='https://via.placeholder.com/50x50/cccccc/ffffff?text=Logo'">
+                <h1>مركز فاطمة لطب الأسنان</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/pages/doctors.html">الأطباء</a></li>
+                    <li><a href="/pages/booking.html">حجز موعد</a></li>
+                    <li><a href="/pages/inquiries.html">الاستعلامات</a></li>
+                    <li><a href="/pages/doctor-dashboard.html" class="active">واجهة الأطباء</a></li>
+                    <li><a href="/pages/admin-panel.html">لوحة التحكم</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Doctor Dashboard -->
+    <section class="doctor-dashboard">
+        <div class="container">
+            <h2>واجهة الطبيب</h2>
+            
+            <div class="dashboard-content">
+                <div class="dashboard-sidebar">
+                    <div class="doctor-profile">
+                        <div class="profile-image">
+                            <img src="https://via.placeholder.com/80x80/3498db/ffffff?text=د.أ" alt="صورة الطبيب" onerror="this.src='https://via.placeholder.com/80x80/cccccc/ffffff?text=د.أ'">
+                        </div>
+                        <h3>د. أحمد محمد</h3>
+                        <p>عيادة طب الأسنان العامة</p>
+                    </div>
+                    
+                    <nav class="dashboard-nav">
+                        <ul>
+                            <li><a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> لوحة القيادة</a></li>
+                            <li><a href="#appointments"><i class="fas fa-calendar-check"></i> إدارة المواعيد</a></li>
+                            <li><a href="#patients"><i class="fas fa-users"></i> إدارة المرضى</a></li>
+                            <li><a href="#reports"><i class="fas fa-file-medical"></i> التقارير</a></li>
+                            <li><a href="#schedule"><i class="fas fa-clock"></i> الجدول الزمني</a></li>
+                            <li><a href="#chat"><i class="fas fa-comments"></i> المحادثات</a></li>
+                            <li><a href="#settings"><i class="fas fa-cog"></i> الإعدادات</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <div class="dashboard-main">
+                    <!-- Dashboard Section -->
+                    <div class="dashboard-section active" id="dashboard-section">
+                        <h3><i class="fas fa-tachometer-alt"></i> لوحة القيادة</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-primary">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="appointments-count">25</h4>
+                                    <p>موعد اليوم</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon bg-success">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="doctors-count">15</h4>
+                                    <p>طبيب</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon bg-warning">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="patients-count">127</h4>
+                                    <p>مريض</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon bg-info">
+                                    <i class="fas fa-file-medical"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="reports-count">1,245</h4>
+                                    <p>تقرير طبي</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-activity">
+                            <h4><i class="fas fa-history"></i> النشاط الأخير</h4>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-success">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>تم حجز موعد جديد لـ محمد أحمد</p>
+                                        <span>قبل 5 دقائق</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>تم تحديث معلومات الطبيب د. أحمد محمد</p>
+                                        <span>قبل 15 دقيقة</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-warning">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>تم إنشاء حساب جديد للمستخدم فاطمة علي</p>
+                                        <span>قبل 30 دقيقة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Appointments Management Section -->
+                    <div class="dashboard-section" id="appointments-section">
+                        <h3><i class="fas fa-calendar-check"></i> إدارة المواعيد</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="openAppointmentModal()">
+                                <i class="fas fa-plus"></i> إضافة موعد جديد
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="appointment-search" placeholder="البحث في المواعيد..." onkeyup="searchAppointments()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="appointment-status-filter" onchange="filterAppointments()">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="confirmed">مؤكد</option>
+                                    <option value="pending">قيد الانتظار</option>
+                                    <option value="cancelled">ملغى</option>
+                                </select>
+                            </div>
+                            <div class="filter-box">
+                                <input type="date" id="appointment-date-filter" onchange="filterAppointments()">
+                            </div>
+                        </div>
+                        
+                        <div class="appointments-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اسم المريض</th>
+                                        <th>الطبيب</th>
+                                        <th>التاريخ</th>
+                                        <th>الوقت</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointments-table-body">
+                                    <!-- سيتم تحميل المواعيد ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="appointments-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Patients Management Section -->
+                    <div class="dashboard-section" id="patients-section">
+                        <h3><i class="fas fa-users"></i> إدارة المرضى</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="openPatientModal()">
+                                <i class="fas fa-plus"></i> إضافة مريض جديد
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="patient-search" placeholder="البحث في المرضى..." onkeyup="searchPatients()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="patient-type-filter" onchange="filterPatients()">
+                                    <option value="">جميع الأنواع</option>
+                                    <option value="new">مريض جديد</option>
+                                    <option value="regular">مريض منتظم</option>
+                                    <option value="vip">مريض VIP</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="patients-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>الاسم</th>
+                                        <th>رقم الهاتف</th>
+                                        <th>آخر زيارة</th>
+                                        <th>النوع</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patients-table-body">
+                                    <!-- سيتم تحميل المرضى ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="patients-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Reports Management Section -->
+                    <div class="dashboard-section" id="reports-section">
+                        <h3><i class="fas fa-file-medical"></i> التقارير الطبية</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="generateReport()">
+                                <i class="fas fa-plus"></i> إنشاء تقرير جديد
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="report-search" placeholder="البحث في التقارير..." onkeyup="searchReports()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="report-type-filter" onchange="filterReports()">
+                                    <option value="">جميع الأنواع</option>
+                                    <option value="daily">تقرير يومي</option>
+                                    <option value="weekly">تقرير أسبوعي</option>
+                                    <option value="monthly">تقرير شهري</option>
+                                    <option value="annual">تقرير سنوي</option>
+                                </select>
+                            </div>
+                            <div class="filter-box">
+                                <input type="date" id="report-date-filter" onchange="filterReports()">
+                            </div>
+                        </div>
+                        
+                        <div class="reports-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اسم التقرير</th>
+                                        <th>التاريخ</th>
+                                        <th>النوع</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table-body">
+                                    <!-- سيتم تحميل التقارير ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="reports-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Schedule Management Section -->
+                    <div class="dashboard-section" id="schedule-section">
+                        <h3><i class="fas fa-clock"></i> الجدول الزمني</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="openScheduleModal()">
+                                <i class="fas fa-plus"></i> إضافة جلسة جديدة
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="schedule-search" placeholder="البحث في الجدول الزمني..." onkeyup="searchSchedules()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="schedule-day-filter" onchange="filterSchedules()">
+                                    <option value="">جميع الأيام</option>
+                                    <option value="saturday">السبت</option>
+                                    <option value="sunday">الأحد</option>
+                                    <option value="monday">الاثنين</option>
+                                    <option value="tuesday">الثلاثاء</option>
+                                    <option value="wednesday">الأربعاء</option>
+                                    <option value="thursday">الخميس</option>
+                                    <option value="friday">الجمعة</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="schedules-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اليوم</th>
+                                        <th>التاريخ</th>
+                                        <th>الوقت</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedules-table-body">
+                                    <!-- سيتم تحميل الجدول الزمني ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="schedules-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Management Section -->
+                    <div class="dashboard-section" id="chat-section">
+                        <h3><i class="fas fa-comments"></i> المحادثات المباشرة</h3>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="chat-search" placeholder="البحث في المحادثات..." onkeyup="searchChats()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="chat-status-filter" onchange="filterChats()">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">غير نشط</option>
+                                    <option value="archived">مؤرشف</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="chats-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اسم المريض</th>
+                                        <th>آخر رسالة</th>
+                                        <th>التاريخ</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chats-table-body">
+                                    <!-- سيتم تحميل المحادثات ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="chats-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Management Section -->
+                    <div class="dashboard-section" id="settings-section">
+                        <h3><i class="fas fa-cog"></i> الإعدادات الشخصية</h3>
+                        
+                        <div class="tabs">
+                            <div class="tab active" data-tab="profile" onclick="switchTab('profile')">الملف الشخصي</div>
+                            <div class="tab" data-tab="notifications" onclick="switchTab('notifications')">الإشعارات</div>
+                            <div class="tab" data-tab="preferences" onclick="switchTab('preferences')">التفضيلات</div>
+                        </div>
+                        
+                        <div class="tab-content active" id="profile-tab">
+                            <div class="settings-section">
+                                <h3><i class="fas fa-user"></i> معلومات الحساب</h3>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorName">الاسم الكامل</label>
+                                    <input type="text" id="doctorName" value="د. أحمد محمد">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorSpecialty">التخصص</label>
+                                    <input type="text" id="doctorSpecialty" value="عيادة طب الأسنان العامة">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorPhone">رقم الهاتف</label>
+                                    <input type="tel" id="doctorPhone" value="0123456789">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorEmail">البريد الإلكتروني</label>
+                                    <input type="email" id="doctorEmail" value="ahmed@fatimadental.com">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorPassword">كلمة المرور</label>
+                                    <input type="password" id="doctorPassword" placeholder="اتركه فارغًا إذا لم ترد تغييره">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label>صورة الطبيب</label>
+                                    <div class="upload-area" onclick="document.getElementById('doctorImageUpload').click()">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>انقر لرفع صورة الطبيب</p>
+                                        <p class="small">الحجم الموصى به: 200x200 بكسل</p>
+                                    </div>
+                                    <input type="file" id="doctorImageUpload" accept="image/*" style="display: none;" onchange="previewImage(event, 'doctorImagePreview')">
+                                    <div class="image-preview" id="doctorImagePreview">
+                                        <img src="https://via.placeholder.com/100x100/3498db/ffffff?text=د.أ" alt="معاينة الصورة">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="notifications-tab">
+                            <div class="settings-section">
+                                <h3><i class="fas fa-bell"></i> إعدادات الإشعارات</h3>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyNewAppointments">إشعارات المواعيد الجديدة</label>
+                                    <input type="checkbox" id="notifyNewAppointments" checked>
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyChatMessages">إشعارات المحادثات</label>
+                                    <input type="checkbox" id="notifyChatMessages" checked>
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyDailyReports">تقارير يومية</label>
+                                    <input type="checkbox" id="notifyDailyReports">
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyWeeklyReports">تقارير أسبوعية</label>
+                                    <input type="checkbox" id="notifyWeeklyReports" checked>
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyMonthlyReports">تقارير شهرية</label>
+                                    <input type="checkbox" id="notifyMonthlyReports">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="preferences-tab">
+                            <div class="settings-section">
+                                <h3><i class="fas fa-palette"></i> تفضيلات الواجهة</h3>
+                                
+                                <div class="setting-group">
+                                    <label for="themeColor">لون الواجهة</label>
+                                    <select id="themeColor">
+                                        <option value="blue">أزرق</option>
+                                        <option value="green">أخضر</option>
+                                        <option value="purple">بنفسجي</option>
+                                        <option value="orange">برتقالي</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="language">اللغة</label>
+                                    <select id="language">
+                                        <option value="ar">العربية</option>
+                                        <option value="en">الإنجليزية</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="fontSize">حجم الخط</label>
+                                    <input type="range" id="fontSize" min="12" max="24" value="16">
+                                    <span id="fontSizeValue">16px</span>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h3><i class="fas fa-sliders-h"></i> إعدادات العناصر</h3>
+                                
+                                <div class="setting-group">
+                                    <label for="buttonStyle">نمط الأزرار</label>
+                                    <select id="buttonStyle">
+                                        <option value="rounded">مدور</option>
+                                        <option value="square">مربع</option>
+                                        <option value="pill">كبسولة</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="cardStyle">نمط البطاقات</label>
+                                    <select id="cardStyle">
+                                        <option value="flat">مسطح</option>
+                                        <option value="raised">مرتفع</option>
+                                        <option value="outlined">محاط بحدود</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="saveDoctorSettings()">
+                                <i class="fas fa-save"></i> حفظ الإعدادات
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetDoctorSettings()">
+                                <i class="fas fa-undo"></i> إعادة تعيين
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAppointmentModal()">&times;</span>
+            <h2>إضافة/تعديل موعد</h2>
+            <form id="appointmentForm">
+                <input type="hidden" id="appointmentId">
+                <div class="setting-group">
+                    <label for="appointmentPatient">اسم المريض</label>
+                    <input type="text" id="appointmentPatient" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentDoctor">الطبيب</label>
+                    <select id="appointmentDoctor" required>
+                        <option value="">اختر طبيبًا</option>
+                        <option value="1">د. أحمد محمد - عيادة طب الأسنان العامة</option>
+                        <option value="2">د. فاطمة علي - عيادة جراحة الأسنان</option>
+                        <option value="3">د. محمد حسن - عيادة تقويم الأسنان</option>
+                        <option value="4">د. سارة أحمد - عيادة طب الأسنان للأطفال</option>
+                        <option value="5">د. خالد محمود - عيادة زراعة الأسنان</option>
+                        <option value="6">د. نادية عمر - عيادة تجميل الأسنان</option>
+                        <option value="7">د. وليد عبد الله - عيادة علاج اللثة</option>
+                        <option value="8">د. ريم عبد الرحمن - عيادة الأسنان الرقمية</option>
+                        <option value="9">د. طارق محمد - عيادة طب الأسنان الوقائي</option>
+                        <option value="10">د. منى أحمد - عيادة طب الأسنان الطارئ</option>
+                        <option value="11">د. يوسف علي - عيادة تبييض الأسنان</option>
+                        <option value="12">د. هند محمد - عيادة جراحة الفم</option>
+                        <option value="13">د. ماهر أحمد - عيادة طب الأسنان التجميلي</option>
+                        <option value="14">د. نور عبد الله - عيادة طب الأسنان المتطور</option>
+                        <option value="15">د. سلمى محمد - عيادة طب الأسنان الشامل</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentDate">التاريخ</label>
+                    <input type="date" id="appointmentDate" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentTime">الوقت</label>
+                    <select id="appointmentTime" required>
+                        <option value="">اختر الوقت</option>
+                        <option value="09:00">09:00 صباحاً</option>
+                        <option value="09:30">09:30 صباحاً</option>
+                        <option value="10:00">10:00 صباحاً</option>
+                        <option value="10:30">10:30 صباحاً</option>
+                        <option value="11:00">11:00 صباحاً</option>
+                        <option value="11:30">11:30 صباحاً</option>
+                        <option value="14:00">02:00 مساءً</option>
+                        <option value="14:30">02:30 مساءً</option>
+                        <option value="15:00">03:00 مساءً</option>
+                        <option value="15:30">03:30 مساءً</option>
+                        <option value="16:00">04:00 مساءً</option>
+                        <option value="16:30">04:30 مساءً</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentStatus">الحالة</label>
+                    <select id="appointmentStatus" required>
+                        <option value="pending">قيد الانتظار</option>
+                        <option value="confirmed">مؤكد</option>
+                        <option value="cancelled">ملغى</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentNotes">ملاحظات</label>
+                    <textarea id="appointmentNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="admin-actions" style="justify-content: flex-start; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">حفظ الموعد</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAppointmentModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Patient Modal -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePatientModal()">&times;</span>
+            <h2>إضافة/تعديل مريض</h2>
+            <form id="patientForm">
+                <input type="hidden" id="patientId">
+                <div class="setting-group">
+                    <label for="patientName">اسم المريض</label>
+                    <input type="text" id="patientName" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientPhone">رقم الهاتف</label>
+                    <input type="tel" id="patientPhone" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientEmail">البريد الإلكتروني</label>
+                    <input type="email" id="patientEmail" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientAddress">العنوان</label>
+                    <textarea id="patientAddress" rows="2"></textarea>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientType">نوع المريض</label>
+                    <select id="patientType" required>
+                        <option value="new">مريض جديد</option>
+                        <option value="regular">مريض منتظم</option>
+                        <option value="vip">مريض VIP</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientNotes">ملاحظات طبية</label>
+                    <textarea id="patientNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="admin-actions" style="justify-content: flex-start; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">حفظ المريض</button>
+                    <button type="button" class="btn btn-secondary" onclick="closePatientModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeScheduleModal()">&times;</span>
+            <h2>إضافة/تعديل جلسة</h2>
+            <form id="scheduleForm">
+                <input type="hidden" id="scheduleId">
+                <div class="setting-group">
+                    <label for="scheduleDay">اليوم</label>
+                    <select id="scheduleDay" required>
+                        <option value="">اختر اليوم</option>
+                        <option value="saturday">السبت</option>
+                        <option value="sunday">الأحد</option>
+                        <option value="monday">الاثنين</option>
+                        <option value="tuesday">الثلاثاء</option>
+                        <option value="wednesday">الأربعاء</option>
+                        <option value="thursday">الخميس</option>
+                        <option value="friday">الجمعة</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleDate">التاريخ</label>
+                    <input type="date" id="scheduleDate" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleStartTime">وقت البدء</label>
+                    <input type="time" id="scheduleStartTime" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleEndTime">وقت الانتهاء</label>
+                    <input type="time" id="scheduleEndTime" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleNotes">ملاحظات</label>
+                    <textarea id="scheduleNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="admin-actions" style="justify-content: flex-start; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">حفظ الجلسة</button>
+                    <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة الأطباء - مركز فاطمة لطب الأسنان</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .doctor-dashboard {
+            padding: 100px 0 50px;
+            background: #f8f9fa;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .dashboard-content {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .dashboard-sidebar {
+            flex: 0 0 250px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .doctor-profile {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 15px;
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .dashboard-nav ul {
+            list-style: none;
+        }
+        
+        .dashboard-nav li {
+            margin-bottom: 5px;
+        }
+        
+        .dashboard-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-nav a:hover,
+        .dashboard-nav a.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .dashboard-main {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .dashboard-section {
+            display: none;
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .bg-primary {
+            background: #3498db;
+        }
+        
+        .bg-success {
+            background: #27ae60;
+        }
+        
+        .bg-warning {
+            background: #f39c12;
+        }
+        
+        .bg-info {
+            background: #34495e;
+        }
+        
+        .stat-info h4 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .recent-activity {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .activity-list {
+            margin-top: 15px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .activity-content p {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .activity-content span {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        .admin-actions {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .clinics-list table,
+        .doctors-list table,
+        .appointments-list table,
+        .users-list table,
+        .services-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .clinics-list th,
+        .clinics-list td,
+        .doctors-list th,
+        .doctors-list td,
+        .appointments-list th,
+        .appointments-list td,
+        .users-list th,
+        .users-list td,
+        .services-list th,
+        .services-list td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .clinics-list th,
+        .doctors-list th,
+        .appointments-list th,
+        .users-list th,
+        .services-list th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-confirmed {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status-cancelled {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-box {
+            min-width: 150px;
+        }
+        
+        .search-box input,
+        .filter-box select,
+        .filter-box input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 5px;
+        }
+        
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .pagination button:hover:not(.active) {
+            background: #f8f9fa;
+        }
+        
+        /* Appearance Settings Styles */
+        .appearance-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .setting-group {
+            margin-bottom: 25px;
+        }
+        
+        .setting-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .setting-group input[type="color"],
+        .setting-group input[type="text"],
+        .setting-group input[type="number"],
+        .setting-group select,
+        .setting-group input[type="file"],
+        .setting-group input[type="email"],
+        .setting-group input[type="tel"],
+        .setting-group input[type="password"],
+        .setting-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .setting-group input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+        
+        .preview-text {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .layout-preview {
+            border: 2px dashed #3498db;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            margin: 20px 0;
+        }
+        
+        .preview-header {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .preview-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .preview-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .preview-footer {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .settings-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .setting-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .setting-row label {
+            flex: 1;
+            font-weight: normal;
+        }
+        
+        .setting-row input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid #3498db;
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        .upload-area i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        /* أنماط إضافية للخطوط */
+        .font-preview {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+        
+        .font-sample {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .doctor-dashboard {
+                padding: 80px 20px 30px;
+            }
+            
+            .dashboard-content {
+                flex-direction: column;
+            }
+            
+            .dashboard-sidebar {
+                flex: none;
+                position: static;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .appearance-settings {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/3498db/ffffff?text=F" alt="شعار المركز" onerror="this.src='https://via.placeholder.com/50x50/cccccc/ffffff?text=Logo'">
+                <h1>مركز فاطمة لطب الأسنان</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/pages/doctors.html">الأطباء</a></li>
+                    <li><a href="/pages/booking.html">حجز موعد</a></li>
+                    <li><a href="/pages/inquiries.html">الاستعلامات</a></li>
+                    <li><a href="/pages/doctor-dashboard.html" class="active">واجهة الأطباء</a></li>
+                    <li><a href="/pages/admin-panel.html">لوحة التحكم</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Doctor Dashboard -->
+    <section class="doctor-dashboard">
+        <div class="container">
+            <h2>واجهة الطبيب</h2>
+            
+            <div class="dashboard-content">
+                <div class="dashboard-sidebar">
+                    <div class="doctor-profile">
+                        <div class="profile-image">
+                            <img src="https://via.placeholder.com/80x80/3498db/ffffff?text=د.أ" alt="صورة الطبيب" onerror="this.src='https://via.placeholder.com/80x80/cccccc/ffffff?text=د.أ'">
+                        </div>
+                        <h3>د. أحمد محمد</h3>
+                        <p>عيادة طب الأسنان العامة</p>
+                    </div>
+                    
+                    <nav class="dashboard-nav">
+                        <ul>
+                            <li><a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> لوحة القيادة</a></li>
+                            <li><a href="#appointments"><i class="fas fa-calendar-check"></i> إدارة المواعيد</a></li>
+                            <li><a href="#patients"><i class="fas fa-users"></i> إدارة المرضى</a></li>
+                            <li><a href="#reports"><i class="fas fa-file-medical"></i> التقارير</a></li>
+                            <li><a href="#schedule"><i class="fas fa-clock"></i> الجدول الزمني</a></li>
+                            <li><a href="#chat"><i class="fas fa-comments"></i> المحادثات</a></li>
+                            <li><a href="#settings"><i class="fas fa-cog"></i> الإعدادات</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                
+                <div class="dashboard-main">
+                    <!-- Dashboard Section -->
+                    <div class="dashboard-section active" id="dashboard-section">
+                        <h3><i class="fas fa-tachometer-alt"></i> لوحة القيادة</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-primary">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="appointments-count">25</h4>
+                                    <p>موعد اليوم</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon bg-success">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="doctors-count">15</h4>
+                                    <p>طبيب</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon bg-warning">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="patients-count">127</h4>
+                                    <p>مريض</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon bg-info">
+                                    <i class="fas fa-file-medical"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h4 id="reports-count">1,245</h4>
+                                    <p>تقرير طبي</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-activity">
+                            <h4><i class="fas fa-history"></i> النشاط الأخير</h4>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-success">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>تم حجز موعد جديد لـ محمد أحمد</p>
+                                        <span>قبل 5 دقائق</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>تم تحديث معلومات الطبيب د. أحمد محمد</p>
+                                        <span>قبل 15 دقيقة</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="activity-item">
+                                    <div class="activity-icon bg-warning">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>تم إنشاء حساب جديد للمستخدم فاطمة علي</p>
+                                        <span>قبل 30 دقيقة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Appointments Management Section -->
+                    <div class="dashboard-section" id="appointments-section">
+                        <h3><i class="fas fa-calendar-check"></i> إدارة المواعيد</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="openAppointmentModal()">
+                                <i class="fas fa-plus"></i> إضافة موعد جديد
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="appointment-search" placeholder="البحث في المواعيد..." onkeyup="searchAppointments()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="appointment-status-filter" onchange="filterAppointments()">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="confirmed">مؤكد</option>
+                                    <option value="pending">قيد الانتظار</option>
+                                    <option value="cancelled">ملغى</option>
+                                </select>
+                            </div>
+                            <div class="filter-box">
+                                <input type="date" id="appointment-date-filter" onchange="filterAppointments()">
+                            </div>
+                        </div>
+                        
+                        <div class="appointments-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اسم المريض</th>
+                                        <th>الطبيب</th>
+                                        <th>التاريخ</th>
+                                        <th>الوقت</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointments-table-body">
+                                    <!-- سيتم تحميل المواعيد ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="appointments-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Patients Management Section -->
+                    <div class="dashboard-section" id="patients-section">
+                        <h3><i class="fas fa-users"></i> إدارة المرضى</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="openPatientModal()">
+                                <i class="fas fa-plus"></i> إضافة مريض جديد
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="patient-search" placeholder="البحث في المرضى..." onkeyup="searchPatients()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="patient-type-filter" onchange="filterPatients()">
+                                    <option value="">جميع الأنواع</option>
+                                    <option value="new">مريض جديد</option>
+                                    <option value="regular">مريض منتظم</option>
+                                    <option value="vip">مريض VIP</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="patients-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>الاسم</th>
+                                        <th>رقم الهاتف</th>
+                                        <th>آخر زيارة</th>
+                                        <th>النوع</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patients-table-body">
+                                    <!-- سيتم تحميل المرضى ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="patients-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Reports Management Section -->
+                    <div class="dashboard-section" id="reports-section">
+                        <h3><i class="fas fa-file-medical"></i> التقارير الطبية</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="generateReport()">
+                                <i class="fas fa-plus"></i> إنشاء تقرير جديد
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="report-search" placeholder="البحث في التقارير..." onkeyup="searchReports()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="report-type-filter" onchange="filterReports()">
+                                    <option value="">جميع الأنواع</option>
+                                    <option value="daily">تقرير يومي</option>
+                                    <option value="weekly">تقرير أسبوعي</option>
+                                    <option value="monthly">تقرير شهري</option>
+                                    <option value="annual">تقرير سنوي</option>
+                                </select>
+                            </div>
+                            <div class="filter-box">
+                                <input type="date" id="report-date-filter" onchange="filterReports()">
+                            </div>
+                        </div>
+                        
+                        <div class="reports-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اسم التقرير</th>
+                                        <th>التاريخ</th>
+                                        <th>النوع</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table-body">
+                                    <!-- سيتم تحميل التقارير ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="reports-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Schedule Management Section -->
+                    <div class="dashboard-section" id="schedule-section">
+                        <h3><i class="fas fa-clock"></i> الجدول الزمني</h3>
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="openScheduleModal()">
+                                <i class="fas fa-plus"></i> إضافة جلسة جديدة
+                            </button>
+                        </div>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="schedule-search" placeholder="البحث في الجدول الزمني..." onkeyup="searchSchedules()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="schedule-day-filter" onchange="filterSchedules()">
+                                    <option value="">جميع الأيام</option>
+                                    <option value="saturday">السبت</option>
+                                    <option value="sunday">الأحد</option>
+                                    <option value="monday">الاثنين</option>
+                                    <option value="tuesday">الثلاثاء</option>
+                                    <option value="wednesday">الأربعاء</option>
+                                    <option value="thursday">الخميس</option>
+                                    <option value="friday">الجمعة</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="schedules-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اليوم</th>
+                                        <th>التاريخ</th>
+                                        <th>الوقت</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedules-table-body">
+                                    <!-- سيتم تحميل الجدول الزمني ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="schedules-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Management Section -->
+                    <div class="dashboard-section" id="chat-section">
+                        <h3><i class="fas fa-comments"></i> المحادثات المباشرة</h3>
+                        
+                        <div class="search-filter">
+                            <div class="search-box">
+                                <input type="text" id="chat-search" placeholder="البحث في المحادثات..." onkeyup="searchChats()">
+                            </div>
+                            <div class="filter-box">
+                                <select id="chat-status-filter" onchange="filterChats()">
+                                    <option value="">جميع الحالات</option>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">غير نشط</option>
+                                    <option value="archived">مؤرشف</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="chats-list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>اسم المريض</th>
+                                        <th>آخر رسالة</th>
+                                        <th>التاريخ</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chats-table-body">
+                                    <!-- سيتم تحميل المحادثات ديناميكياً -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="chats-pagination">
+                            <!-- سيتم تحميل أرقام الصفحات ديناميكياً -->
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Management Section -->
+                    <div class="dashboard-section" id="settings-section">
+                        <h3><i class="fas fa-cog"></i> الإعدادات الشخصية</h3>
+                        
+                        <div class="tabs">
+                            <div class="tab active" data-tab="profile" onclick="switchTab('profile')">الملف الشخصي</div>
+                            <div class="tab" data-tab="notifications" onclick="switchTab('notifications')">الإشعارات</div>
+                            <div class="tab" data-tab="preferences" onclick="switchTab('preferences')">التفضيلات</div>
+                        </div>
+                        
+                        <div class="tab-content active" id="profile-tab">
+                            <div class="settings-section">
+                                <h3><i class="fas fa-user"></i> معلومات الحساب</h3>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorName">الاسم الكامل</label>
+                                    <input type="text" id="doctorName" value="د. أحمد محمد">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorSpecialty">التخصص</label>
+                                    <input type="text" id="doctorSpecialty" value="عيادة طب الأسنان العامة">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorPhone">رقم الهاتف</label>
+                                    <input type="tel" id="doctorPhone" value="0123456789">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorEmail">البريد الإلكتروني</label>
+                                    <input type="email" id="doctorEmail" value="ahmed@fatimadental.com">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="doctorPassword">كلمة المرور</label>
+                                    <input type="password" id="doctorPassword" placeholder="اتركه فارغًا إذا لم ترد تغييره">
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label>صورة الطبيب</label>
+                                    <div class="upload-area" onclick="document.getElementById('doctorImageUpload').click()">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>انقر لرفع صورة الطبيب</p>
+                                        <p class="small">الحجم الموصى به: 200x200 بكسل</p>
+                                    </div>
+                                    <input type="file" id="doctorImageUpload" accept="image/*" style="display: none;" onchange="previewImage(event, 'doctorImagePreview')">
+                                    <div class="image-preview" id="doctorImagePreview">
+                                        <img src="https://via.placeholder.com/100x100/3498db/ffffff?text=د.أ" alt="معاينة الصورة">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="notifications-tab">
+                            <div class="settings-section">
+                                <h3><i class="fas fa-bell"></i> إعدادات الإشعارات</h3>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyNewAppointments">إشعارات المواعيد الجديدة</label>
+                                    <input type="checkbox" id="notifyNewAppointments" checked>
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyChatMessages">إشعارات المحادثات</label>
+                                    <input type="checkbox" id="notifyChatMessages" checked>
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyDailyReports">تقارير يومية</label>
+                                    <input type="checkbox" id="notifyDailyReports">
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyWeeklyReports">تقارير أسبوعية</label>
+                                    <input type="checkbox" id="notifyWeeklyReports" checked>
+                                </div>
+                                
+                                <div class="setting-row">
+                                    <label for="notifyMonthlyReports">تقارير شهرية</label>
+                                    <input type="checkbox" id="notifyMonthlyReports">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="preferences-tab">
+                            <div class="settings-section">
+                                <h3><i class="fas fa-palette"></i> تفضيلات الواجهة</h3>
+                                
+                                <div class="setting-group">
+                                    <label for="themeColor">لون الواجهة</label>
+                                    <select id="themeColor">
+                                        <option value="blue">أزرق</option>
+                                        <option value="green">أخضر</option>
+                                        <option value="purple">بنفسجي</option>
+                                        <option value="orange">برتقالي</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="language">اللغة</label>
+                                    <select id="language">
+                                        <option value="ar">العربية</option>
+                                        <option value="en">الإنجليزية</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="fontSize">حجم الخط</label>
+                                    <input type="range" id="fontSize" min="12" max="24" value="16">
+                                    <span id="fontSizeValue">16px</span>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-section">
+                                <h3><i class="fas fa-sliders-h"></i> إعدادات العناصر</h3>
+                                
+                                <div class="setting-group">
+                                    <label for="buttonStyle">نمط الأزرار</label>
+                                    <select id="buttonStyle">
+                                        <option value="rounded">مدور</option>
+                                        <option value="square">مربع</option>
+                                        <option value="pill">كبسولة</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="cardStyle">نمط البطاقات</label>
+                                    <select id="cardStyle">
+                                        <option value="flat">مسطح</option>
+                                        <option value="raised">مرتفع</option>
+                                        <option value="outlined">محاط بحدود</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-actions">
+                            <button class="btn btn-primary" onclick="saveDoctorSettings()">
+                                <i class="fas fa-save"></i> حفظ الإعدادات
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetDoctorSettings()">
+                                <i class="fas fa-undo"></i> إعادة تعيين
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAppointmentModal()">&times;</span>
+            <h2>إضافة/تعديل موعد</h2>
+            <form id="appointmentForm">
+                <input type="hidden" id="appointmentId">
+                <div class="setting-group">
+                    <label for="appointmentPatient">اسم المريض</label>
+                    <input type="text" id="appointmentPatient" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentDoctor">الطبيب</label>
+                    <select id="appointmentDoctor" required>
+                        <option value="">اختر طبيبًا</option>
+                        <option value="1">د. أحمد محمد - عيادة طب الأسنان العامة</option>
+                        <option value="2">د. فاطمة علي - عيادة جراحة الأسنان</option>
+                        <option value="3">د. محمد حسن - عيادة تقويم الأسنان</option>
+                        <option value="4">د. سارة أحمد - عيادة طب الأسنان للأطفال</option>
+                        <option value="5">د. خالد محمود - عيادة زراعة الأسنان</option>
+                        <option value="6">د. نادية عمر - عيادة تجميل الأسنان</option>
+                        <option value="7">د. وليد عبد الله - عيادة علاج اللثة</option>
+                        <option value="8">د. ريم عبد الرحمن - عيادة الأسنان الرقمية</option>
+                        <option value="9">د. طارق محمد - عيادة طب الأسنان الوقائي</option>
+                        <option value="10">د. منى أحمد - عيادة طب الأسنان الطارئ</option>
+                        <option value="11">د. يوسف علي - عيادة تبييض الأسنان</option>
+                        <option value="12">د. هند محمد - عيادة جراحة الفم</option>
+                        <option value="13">د. ماهر أحمد - عيادة طب الأسنان التجميلي</option>
+                        <option value="14">د. نور عبد الله - عيادة طب الأسنان المتطور</option>
+                        <option value="15">د. سلمى محمد - عيادة طب الأسنان الشامل</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentDate">التاريخ</label>
+                    <input type="date" id="appointmentDate" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentTime">الوقت</label>
+                    <select id="appointmentTime" required>
+                        <option value="">اختر الوقت</option>
+                        <option value="09:00">09:00 صباحاً</option>
+                        <option value="09:30">09:30 صباحاً</option>
+                        <option value="10:00">10:00 صباحاً</option>
+                        <option value="10:30">10:30 صباحاً</option>
+                        <option value="11:00">11:00 صباحاً</option>
+                        <option value="11:30">11:30 صباحاً</option>
+                        <option value="14:00">02:00 مساءً</option>
+                        <option value="14:30">02:30 مساءً</option>
+                        <option value="15:00">03:00 مساءً</option>
+                        <option value="15:30">03:30 مساءً</option>
+                        <option value="16:00">04:00 مساءً</option>
+                        <option value="16:30">04:30 مساءً</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentStatus">الحالة</label>
+                    <select id="appointmentStatus" required>
+                        <option value="pending">قيد الانتظار</option>
+                        <option value="confirmed">مؤكد</option>
+                        <option value="cancelled">ملغى</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="appointmentNotes">ملاحظات</label>
+                    <textarea id="appointmentNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="admin-actions" style="justify-content: flex-start; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">حفظ الموعد</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAppointmentModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Patient Modal -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePatientModal()">&times;</span>
+            <h2>إضافة/تعديل مريض</h2>
+            <form id="patientForm">
+                <input type="hidden" id="patientId">
+                <div class="setting-group">
+                    <label for="patientName">اسم المريض</label>
+                    <input type="text" id="patientName" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientPhone">رقم الهاتف</label>
+                    <input type="tel" id="patientPhone" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientEmail">البريد الإلكتروني</label>
+                    <input type="email" id="patientEmail" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientAddress">العنوان</label>
+                    <textarea id="patientAddress" rows="2"></textarea>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientType">نوع المريض</label>
+                    <select id="patientType" required>
+                        <option value="new">مريض جديد</option>
+                        <option value="regular">مريض منتظم</option>
+                        <option value="vip">مريض VIP</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="patientNotes">ملاحظات طبية</label>
+                    <textarea id="patientNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="admin-actions" style="justify-content: flex-start; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">حفظ المريض</button>
+                    <button type="button" class="btn btn-secondary" onclick="closePatientModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeScheduleModal()">&times;</span>
+            <h2>إضافة/تعديل جلسة</h2>
+            <form id="scheduleForm">
+                <input type="hidden" id="scheduleId">
+                <div class="setting-group">
+                    <label for="scheduleDay">اليوم</label>
+                    <select id="scheduleDay" required>
+                        <option value="">اختر اليوم</option>
+                        <option value="saturday">السبت</option>
+                        <option value="sunday">الأحد</option>
+                        <option value="monday">الاثنين</option>
+                        <option value="tuesday">الثلاثاء</option>
+                        <option value="wednesday">الأربعاء</option>
+                        <option value="thursday">الخميس</option>
+                        <option value="friday">الجمعة</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleDate">التاريخ</label>
+                    <input type="date" id="scheduleDate" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleStartTime">وقت البدء</label>
+                    <input type="time" id="scheduleStartTime" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleEndTime">وقت الانتهاء</label>
+                    <input type="time" id="scheduleEndTime" required>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="scheduleNotes">ملاحظات</label>
+                    <textarea id="scheduleNotes" rows="3"></textarea>
+                </div>
+                
+                <div class="admin-actions" style="justify-content: flex-start; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">حفظ الجلسة</button>
+                                                            <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // بيانات العيادات
+        const clinics = [
+            {
+                id: 1,
+                name: "عيادة طب الأسنان العامة",
+                doctor: "د. أحمد محمد",
+                image: "https://via.placeholder.com/300x200/3498db/ffffff?text=عيادة+الأسنان+العامة",
+                phone: "0123456789"
+            },
+            {
+                id: 2,
+                name: "عيادة جراحة الأسنان",
+                doctor: "د. فاطمة علي",
+                image: "https://via.placeholder.com/300x200/e74c3c/ffffff?text=جراحة+الأسنان",
+                phone: "0123456790"
+            }
+        ];
+
+        // بيانات الأطباء
+        const doctors = [
+            {
+                id: 1,
+                name: "د. أحمد محمد",
+                specialty: "طب الأسنان العامة",
+                phone: "0123456789",
+                email: "ahmed@fatimadental.com",
+                bio: "طبيب أسنان مختص في طب الأسنان العام",
+                image: "https://via.placeholder.com/100x100/3498db/ffffff?text=أحمد"
+            },
+            {
+                id: 2,
+                name: "د. فاطمة علي",
+                specialty: "جراحة الأسنان",
+                phone: "0123456790",
+                email: "fatima@fatimadental.com",
+                bio: "طبيب أسنان مختص في جراحة الأسنان",
+                image: "https://via.placeholder.com/100x100/e74c3c/ffffff?text=فاطمة"
+            }
+        ];
+
+        // بيانات المواعيد
+        const appointments = [
+            {
+                id: 1,
+                patientName: "محمد أحمد",
+                doctorId: 1,
+                doctorName: "د. أحمد محمد",
+                date: "2024-01-15",
+                time: "09:00",
+                status: "confirmed",
+                notes: "فحص دوري"
+            },
+            {
+                id: 2,
+                patientName: "سارة خالد",
+                doctorId: 2,
+                doctorName: "د. فاطمة علي",
+                date: "2024-01-15",
+                time: "10:30",
+                status: "pending",
+                notes: "استشارة جراحية"
+            }
+        ];
+
+        // بيانات المستخدمين
+        const users = [
+            {
+                id: 1,
+                name: "محمد أحمد",
+                email: "mohamed@example.com",
+                phone: "0123456789",
+                type: "patient",
+                registrationDate: "2024-01-01"
+            },
+            {
+                id: 2,
+                name: "د. أحمد محمد",
+                email: "ahmed@fatimadental.com",
+                phone: "0123456789",
+                type: "doctor",
+                registrationDate: "2024-01-01"
+            }
+        ];
+
+        // بيانات الخدمات
+        const services = [
+            {
+                id: 1,
+                name: "كشف أسنان شامل",
+                category: "كشف وتشخيص",
+                price: 150,
+                duration: 30,
+                description: "فحص شامل لحالة الأسنان واللثة مع الأشعة السينية",
+                image: "https://via.placeholder.com/100x100/3498db/ffffff?text=كشف",
+                active: true
+            },
+            {
+                id: 2,
+                name: "تنظيف أسنان احترافي",
+                category: "كشف وتشخيص",
+                price: 200,
+                duration: 45,
+                description: "تنظيف أسنان احترافي لإزالة tartar والبلاك",
+                image: "https://via.placeholder.com/100x100/27ae60/ffffff?text=تنظيف",
+                active: true
+            }
+        ];
+
+        // تهيئة الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحميل البيانات الافتراضية
+            loadClinicsTable();
+            loadDoctorsTable();
+            loadAppointmentsTable();
+            loadUsersTable();
+            loadServicesTable();
+            
+            // تحديث العدادات
+            updateCounts();
+            
+            // تحميل قائمة الأطباء في النماذج
+            loadDoctorsInSelects();
+        });
+
+        // تحديث العدادات
+        function updateCounts() {
+            document.getElementById('appointments-count').textContent = appointments.length;
+            document.getElementById('doctors-count').textContent = doctors.length;
+            document.getElementById('patients-count').textContent = users.filter(u => u.type === 'patient').length;
+            document.getElementById('reports-count').textContent = services.length;
+        }
+
+        // تبديل الأقسام
+        function switchAdminSection(sectionId) {
+            // إخفاء جميع الأقسام
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // إزالة الفئة النشطة من جميع الروابط
+            document.querySelectorAll('.admin-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // إظهار القسم المطلوب
+            document.getElementById(sectionId + '-section').style.display = 'block';
+            
+            // إضافة الفئة النشطة للرابط النقر عليه
+            event.target.classList.add('active');
+        }
+
+        // تبديل علامات التبويب
+        function switchTab(tabName) {
+            // إخفاء جميع محتويات التبويب
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // إزالة الفئة النشطة من جميع التبويبات
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // إظهار محتوى التبويب المحدد
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // إضافة الفئة النشطة للتبويب المحدد
+            event.target.classList.add('active');
+        }
+
+        // تحميل جدول العيادات
+        function loadClinicsTable() {
+            const tbody = document.getElementById('clinics-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            clinics.forEach((clinic, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${clinic.name}</td>
+                        <td>${clinic.doctor}</td>
+                        <td>${clinic.phone}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="openClinicModal(${clinic.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteClinic(${clinic.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // تحميل جدول الأطباء
+        function loadDoctorsTable() {
+            const tbody = document.getElementById('doctors-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            doctors.forEach((doctor, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${doctor.name}</td>
+                        <td>${doctor.specialty}</td>
+                        <td>${doctor.phone}</td>
+                        <td>${doctor.email}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="openDoctorModal(${doctor.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteDoctor(${doctor.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // تحميل جدول المواعيد
+        function loadAppointmentsTable() {
+            const tbody = document.getElementById('appointments-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            appointments.forEach((appointment, index) => {
+                const statusClass = `status-${appointment.status}`;
+                const statusText = appointment.status === 'confirmed' ? 'مؤكد' : 
+                                  appointment.status === 'pending' ? 'قيد الانتظار' : 'ملغى';
+                
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${appointment.patientName}</td>
+                        <td>${appointment.doctorName}</td>
+                        <td>${appointment.date}</td>
+                        <td>${appointment.time}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="openAppointmentModal(${appointment.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAppointment(${appointment.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // تحميل جدول المستخدمين
+        function loadUsersTable() {
+            const tbody = document.getElementById('users-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            users.forEach((user, index) => {
+                const userType = user.type === 'patient' ? 'مريض' : 
+                                user.type === 'doctor' ? 'طبيب' : 'مدير';
+                
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone}</td>
+                        <td>${userType}</td>
+                        <td>${user.registrationDate}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="openUserModal(${user.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // تحميل جدول الخدمات
+        function loadServicesTable() {
+            const tbody = document.getElementById('services-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            services.forEach((service, index) => {
+                const statusBadge = service.active ? 
+                    '<span class="status-badge status-confirmed">مفعلة</span>' : 
+                    '<span class="status-badge status-cancelled">معطلة</span>';
+                
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${service.name}</td>
+                        <td>${service.category}</td>
+                        <td>${service.price} ريال</td>
+                        <td>${service.duration} دقيقة</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="openServiceModal(${service.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteService(${service.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // إدارة النوافذ المنبثقة للعيادات
+        function openClinicModal(clinicId = null) {
+            const modal = document.getElementById('clinicModal');
+            const form = document.getElementById('clinicForm');
+            
+            if (clinicId) {
+                // تحرير عيادة موجودة
+                const clinic = clinics.find(c => c.id === clinicId);
+                if (clinic) {
+                    document.getElementById('clinicId').value = clinic.id;
+                    document.getElementById('clinicName').value = clinic.name;
+                    document.getElementById('doctorSelect').value = clinic.doctorId;
+                    document.getElementById('clinicPhone').value = clinic.phone;
+                    document.getElementById('clinicDescription').value = clinic.description || '';
+                    document.querySelector('#clinicImagePreview img').src = clinic.image;
+                }
+            } else {
+                // إضافة عيادة جديدة
+                form.reset();
+                document.getElementById('clinicId').value = '';
+                document.querySelector('#clinicImagePreview img').src = 'https://via.placeholder.com/100x100/cccccc/ffffff?text=عيادة';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeClinicModal() {
+            document.getElementById('clinicModal').style.display = 'none';
+        }
+
+        // إدارة النوافذ المنبثقة للأطباء
+        function openDoctorModal(doctorId = null) {
+            const modal = document.getElementById('doctorModal');
+            const form = document.getElementById('doctorForm');
+            
+            if (doctorId) {
+                // تحرير طبيب موجود
+                const doctor = doctors.find(d => d.id === doctorId);
+                if (doctor) {
+                    document.getElementById('doctorId').value = doctor.id;
+                    document.getElementById('doctorName').value = doctor.name;
+                    document.getElementById('doctorSpecialty').value = doctor.specialty;
+                    document.getElementById('doctorPhone').value = doctor.phone;
+                    document.getElementById('doctorEmail').value = doctor.email;
+                    document.getElementById('doctorBio').value = doctor.bio || '';
+                    document.querySelector('#doctorImagePreview img').src = doctor.image;
+                    document.getElementById('doctorPassword').value = '';
+                }
+            } else {
+                // إضافة طبيب جديد
+                form.reset();
+                document.getElementById('doctorId').value = '';
+                document.querySelector('#doctorImagePreview img').src = 'https://via.placeholder.com/100x100/3498db/ffffff?text=طبيب';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeDoctorModal() {
+            document.getElementById('doctorModal').style.display = 'none';
+        }
+
+        // إدارة النوافذ المنبثقة للمواعيد
+        function openAppointmentModal(appointmentId = null) {
+            const modal = document.getElementById('appointmentModal');
+            const form = document.getElementById('appointmentForm');
+            
+            if (appointmentId) {
+                // تحرير موعد موجود
+                const appointment = appointments.find(a => a.id === appointmentId);
+                if (appointment) {
+                    document.getElementById('appointmentId').value = appointment.id;
+                    document.getElementById('appointmentPatient').value = appointment.patientName;
+                    document.getElementById('appointmentDoctor').value = appointment.doctorId;
+                    document.getElementById('appointmentDate').value = appointment.date;
+                    document.getElementById('appointmentTime').value = appointment.time;
+                    document.getElementById('appointmentStatus').value = appointment.status;
+                    document.getElementById('appointmentNotes').value = appointment.notes || '';
+                }
+            } else {
+                // إضافة موعد جديد
+                form.reset();
+                document.getElementById('appointmentId').value = '';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeAppointmentModal() {
+            document.getElementById('appointmentModal').style.display = 'none';
+        }
+
+        // إدارة النوافذ المنبثقة للمستخدمين
+        function openUserModal(userId = null) {
+            const modal = document.getElementById('userModal');
+            const form = document.getElementById('userForm');
+            
+            if (userId) {
+                // تحرير مستخدم موجود
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    document.getElementById('userId').value = user.id;
+                    document.getElementById('userName').value = user.name;
+                    document.getElementById('userEmail').value = user.email;
+                    document.getElementById('userPhone').value = user.phone;
+                    document.getElementById('userType').value = user.type;
+                    document.getElementById('userPassword').value = '';
+                }
+            } else {
+                // إضافة مستخدم جديد
+                form.reset();
+                document.getElementById('userId').value = '';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        // إدارة النوافذ المنبثقة للخدمات
+        function openServiceModal(serviceId = null) {
+            const modal = document.getElementById('serviceModal');
+            const form = document.getElementById('serviceForm');
+            
+            if (serviceId) {
+                // تحرير خدمة موجودة
+                const service = services.find(s => s.id === serviceId);
+                if (service) {
+                    document.getElementById('serviceId').value = service.id;
+                    document.getElementById('serviceName').value = service.name;
+                    document.getElementById('serviceCategory').value = service.category;
+                    document.getElementById('servicePrice').value = service.price;
+                    document.getElementById('serviceDuration').value = service.duration;
+                    document.getElementById('serviceDescription').value = service.description || '';
+                    document.querySelector('#serviceImagePreview img').src = service.image;
+                    document.getElementById('serviceActive').checked = service.active;
+                }
+            } else {
+                // إضافة خدمة جديدة
+                form.reset();
+                document.getElementById('serviceId').value = '';
+                document.querySelector('#serviceImagePreview img').src = 'https://via.placeholder.com/100x100/3498db/ffffff?text=خدمة';
+                document.getElementById('serviceActive').checked = true;
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').style.display = 'none';
+        }
+
+        // حذف العيادة
+        function deleteClinic(id) {
+            if (confirm('هل أنت متأكد من حذف هذه العيادة؟')) {
+                const index = clinics.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    clinics.splice(index, 1);
+                    loadClinicsTable();
+                    updateCounts();
+                    alert('تم حذف العيادة بنجاح!');
+                }
+            }
+        }
+
+        // حذف الطبيب
+        function deleteDoctor(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الطبيب؟')) {
+                const index = doctors.findIndex(d => d.id === id);
+                if (index !== -1) {
+                    doctors.splice(index, 1);
+                    loadDoctorsTable();
+                    loadDoctorsInSelects(); // تحديث قائمة الأطباء
+                    updateCounts();
+                    alert('تم حذف الطبيب بنجاح!');
+                }
+            }
+        }
+
+        // حذف الموعد
+        function deleteAppointment(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الموعد؟')) {
+                const index = appointments.findIndex(a => a.id === id);
+                if (index !== -1) {
+                    appointments.splice(index, 1);
+                    loadAppointmentsTable();
+                    updateCounts();
+                    alert('تم حذف الموعد بنجاح!');
+                }
+            }
+        }
+
+        // حذف المستخدم
+        function deleteUser(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                const index = users.findIndex(u => u.id === id);
+                if (index !== -1) {
+                    users.splice(index, 1);
+                    loadUsersTable();
+                    updateCounts();
+                    alert('تم حذف المستخدم بنجاح!');
+                }
+            }
+        }
+
+        // حذف الخدمة
+        function deleteService(id) {
+            if (confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
+                const index = services.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    services.splice(index, 1);
+                    loadServicesTable();
+                    updateCounts();
+                    alert('تم حذف الخدمة بنجاح!');
+                }
+            }
+        }
+
+        // تحميل قائمة الأطباء في العناصر المحددة
+        function loadDoctorsInSelects() {
+            const doctorSelects = document.querySelectorAll('#doctorSelect, #appointmentDoctor');
+            doctorSelects.forEach(select => {
+                select.innerHTML = '<option value="">اختر طبيبًا</option>';
+                doctors.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = doctor.name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // معاينة الصورة
+        function previewImage(event, previewId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.querySelector(`#${previewId} img`).src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // حفظ إعدادات الموقع العامة
+        function saveGeneralSettings() {
+            alert('تم حفظ إعدادات الموقع بنجاح!');
+        }
+
+        // إعادة تعيين إعدادات الموقع العامة
+        function resetGeneralSettings() {
+            if (confirm('هل أنت متأكد من إعادة تعيين إعدادات الموقع؟')) {
+                alert('تم إعادة تعيين إعدادات الموقع!');
+            }
+        }
+
+        // إغلاق النوافذ المنبثقة عند النقر خارجها
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        };
+
+        // إغلاق النوافذ المنبثقة عند الضغط على ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
