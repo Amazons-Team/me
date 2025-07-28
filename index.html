@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز فاطمة لطب الأسنان</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero {
+            background: linear-gradient(rgba(52, 152, 219, 0.8), rgba(44, 62, 80, 0.8)), url('https://via.placeholder.com/1200x600/3498db/ffffff?text=مركز+فاطمة+لطب+الأسنان');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            margin-top: 70px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/50x50/3498db/ffffff?text=F" alt="شعار المركز" onerror="this.src='https://via.placeholder.com/50x50/cccccc/ffffff?text=Logo'">
+                <h1>مركز فاطمة لطب الأسنان</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/" class="active">الرئيسية</a></li>
+                    <li><a href="/pages/doctors.html">الأطباء</a></li>
+                    <li><a href="/pages/booking.html">حجز موعد</a></li>
+                    <li><a href="/pages/inquiries.html">الاستعلامات</a></li>
+                    <li><a href="/pages/inquiry-staff.html">موظف الاستعلامات</a></li>
+                    <li><a href="/pages/doctor-dashboard.html">واجهة الأطباء</a></li>
+                    <li><a href="/pages/admin-panel.html">لوحة التحكم</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <button class="btn btn-primary" onclick="openLoginModal()">تسجيل الدخول</button>
+                <button class="btn btn-secondary" onclick="openRegisterModal()">إنشاء حساب</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>مرحباً بكم في مركز فاطمة لطب الأسنان</h2>
+                <p>أفضل خدمات طب الأسنان في المنطقة مع فريق من الخبراء المتخصصين</p>
+                <div class="hero-buttons">
+                    <a href="/pages/booking.html" class="btn btn-primary">احجز موعدك الآن</a>
+                    <a href="/pages/doctors.html" class="btn btn-secondary">تعرف على أطبائنا</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>خدماتنا</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-tooth"></i>
+                    <h3>الكشف الشامل</h3>
+                    <p>فحوصات دقيقة ومتابعة مستمرة لصحة أسنانك</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-user-md"></i>
+                    <h3>فريق متخصص</h3>
+                    <p>15 عيادة بأطباء متخصصين في مختلف تخصصات طب الأسنان</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>حجز إلكتروني</h3>
+                    <p>احجز موعدك بكل سهولة عبر الإنترنت</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>دعم فني</h3>
+                    <p>خدمة الاستعلامات المباشرة على مدار الساعة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clinics Section -->
+    <section class="clinics">
+        <div class="container">
+            <h2>عياداتنا</h2>
+            <div class="clinics-grid" id="clinics-container">
+                <!-- سيتم تحميل العيادات ديناميكياً -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>تسجيل الدخول</h2>
+            <form id="loginForm">
+                <div class="social-login">
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> تسجيل الدخول عبر فيسبوك
+                    </button>
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> تسجيل الدخول عبر جوجل
+                    </button>
+                </div>
+                <div class="divider">أو</div>
+                <input type="email" placeholder="البريد الإلكتروني" required>
+                <input type="password" placeholder="كلمة المرور" required>
+                <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2>إنشاء حساب جديد</h2>
+            <form id="registerForm">
+                <div class="social-login">
+                    <button type="button" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i> التسجيل عبر فيسبوك
+                    </button>
+                    <button type="button" class="social-btn google">
+                        <i class="fab fa-google"></i> التسجيل عبر جوجل
+                    </button>
+                </div>
+                <div class="divider">أو</div>
+                <input type="text" placeholder="الاسم الكامل" required>
+                <input type="email" placeholder="البريد الإلكتروني" required>
+                <input type="tel" placeholder="رقم الهاتف" required>
+                <input type="password" placeholder="كلمة المرور" required>
+                <input type="password" placeholder="تأكيد كلمة المرور" required>
+                <button type="submit" class="btn btn-primary">إنشاء حساب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>مركز فاطمة لطب الأسنان</h3>
+                    <p>أفضل خدمات طب الأسنان في المنطقة</p>
+                </div>
+                <div class="footer-section">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="/">الرئيسية</a></li>
+                        <li><a href="/pages/doctors.html">الأطباء</a></li>
+                        <li><a href="/pages/booking.html">حجز موعد</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>تواصل معنا</h4>
+                    <p><i class="fas fa-phone"></i> 0123-456-789</p>
+                    <p><i class="fas fa-envelope"></i> info@fatimadental.com</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 مركز فاطمة لطب الأسنان. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClinics();
+        });
+    </script>
+</body>
+</html>
